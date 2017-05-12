@@ -1,0 +1,4 @@
+New Customer Y Y Y Y N N N N
+Loyalty Customer Y Y N N Y Y N N
+Coupon Y N Y N Y N Y N 
+Discount X X 20 15 30 10 20 0

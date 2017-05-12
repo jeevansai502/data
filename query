@@ -1,0 +1,1 @@
+create table(id int(11),name varchar(10),fname varchar(10),address varchar(20),age decimal(3,0),mobile decimal(10,0),cgpa decimal(2,0));

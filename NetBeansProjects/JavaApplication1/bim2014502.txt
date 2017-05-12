@@ -1,0 +1,7 @@
+Initial critical path:-  B > C > F > H
+After reduction in 'C'
+New critical path:-  A > D > F > H
+After reduction in 'F'
+New critical path:-  B > C > F > H
+After reduction in 'H'
+New critical path:-  B > C > F > H

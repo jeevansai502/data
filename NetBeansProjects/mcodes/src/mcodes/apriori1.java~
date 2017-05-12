@@ -1,0 +1,74 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mcodes;
+
+import java.util.*;
+import java.io.*;
+
+public class apriori1 {
+
+    double support;
+    ArrayList<String> trans;
+    Map<String, Integer> map;
+
+    void run() throws FileNotFoundException {
+
+        trans = new ArrayList<>();
+        ArrayList<String> temp = new ArrayList<>();
+        map = new HashMap<>();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter support %");
+        support = sc.nextDouble();
+        System.out.println("Enter file name");
+        String file = sc.next();
+
+        sc = new Scanner(new File(file));
+        int lines = 0;
+        while (sc.hasNextLine()) {
+
+            String s = sc.nextLine();
+            if (s.matches("\\s*")) {
+                continue;
+            }
+
+            lines++;
+
+            String[] spl = s.split("\\s+");
+            ArrayList<Integer> set1 = new ArrayList<>();
+            for (int i = 0; i < spl.length; i++) {
+                int n = Integer.parseInt(spl[i]);			
+
+                set1.add(n);
+		set2 = spl[i].trim();		
+	
+                if (map.containsKey(set2)) {
+                    int count = map.get(set2);
+                    map.put(set2, count + 1);
+                } else {
+                    map.put(set2, 1);
+                    temp.add(set2);
+                }
+            }
+		
+Collections.sort(set1);
+
+String a = "";
+for(int i=0;i<set1.size();i++){
+a = a + String.valueOf(set1.get(i));
+}
+
+            trans.add(a);
+        }
+
+        support = (support * lines) / 100;
+
+        apriori(temp, 1);
+    }
+
+ public static void main(String[] args) throws FileNotFoundException {
+        new apriori().run();
+    }    
+}

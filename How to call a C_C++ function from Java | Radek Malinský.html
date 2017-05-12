@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html dir="ltr" itemscope="" itemtype="http://schema.org/Article"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>How to call a C/C++ function from Java | Radek Malinský</title>
+<link rel="stylesheet" href="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/cssblog.css">
+<link rel="shortcut icon" href="http://malinsky.eu/images/favicon.ico">
+<link rel="alternate" type="application/rss+xml" title="RSS malinsky.eu" href="http://malinsky.eu/blog/feed/">
+<link rel="alternate" type="application/atom+xml" title="Atom malinsky.eu" href="http://malinsky.eu/blog/feed/atom/">
+<!--[if lt IE 9]>
+<script>
+                    document.createElement('header');
+                    document.createElement('nav');
+                    document.createElement('section');
+                    document.createElement('article');
+                    document.createElement('aside');
+                    document.createElement('footer');
+</script>
+<![endif]-->
+<meta itemprop="name" content="How to call a C/C++ function from Java">
+<meta property="og:title" content="How to call a C/C++ function from Java">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://malinsky.eu/blog/how-to-call-a-c-function-from-java/">
+<meta property="og:site_name" content="Radek Malinský, Blog">
+<meta property="og:description" content="Java Native Interface (JNI), part of the Java platform, is an interface that enables communication between Java applications running on a Java Virtual Machine (JVM) and native applications&nbsp;or libraries written in other programming languages (e.g. C, C++). JNI provides improved … ">
+<meta itemprop="description" content="Java Native Interface (JNI), part of the Java platform, is an interface that enables communication between Java applications running on a Java Virtual Machine (JVM) and native applications&nbsp;or libraries written in other programming languages (e.g. C, C++). JNI provides improved … ">
+<meta name="description" content="Java Native Interface (JNI), part of the Java platform, is an interface that enables communication between Java applications running on a Java Virtual Machine (JVM) and native applications&nbsp;or libraries written in other programming languages (e.g. C, C++). JNI provides improved … ">
+<meta name="keywords" content="C/C++,Java,JNI,NetBeans,">
+<meta name="author" content="Radek Malinsky">
+<script src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/cbgapi.loaded_1" async=""></script><script src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/cbgapi.loaded_0" async=""></script><script type="text/javascript" async="" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/recaptcha__en.js"></script><script type="text/javascript" async="" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/plusone.js" gapi_processed="true"></script><script id="twitter-wjs" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/widgets.js"></script><script id="facebook-jssdk" async="" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/all.js"></script><script type="text/javascript" async="" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/recaptcha__en.js"></script><script type="text/javascript" async="" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/ga.js"></script><script type="text/javascript" async="" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/jsblog.js"></script><script type="text/javascript">
+                (function() {
+                    var js = document.createElement('script'); js.type = 'text/javascript'; js.async = true;
+                    js.src = '/js/jsblog.php';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(js, s);
+                })();
+                var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-31076899-1']);_gaq.push(['_trackPageview']);
+                (function() {
+                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                })();
+</script>
+<script src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/api_002.js"></script>
+<link rel="stylesheet" type="text/css" href="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/shCore.css"><link rel="stylesheet" type="text/css" href="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/shThemeDefault.css"><script type="text/javascript" charset="utf-8" async="" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/button.js"></script><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yL/r/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yL/r/s816eWC-2sl.gif)}.fb_dialog_close_icon:active{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yL/r/s816eWC-2sl.gif)}.fb_dialog_loader{background-color:#f6f7f9;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{width:auto;height:auto;min-height:initial;min-width:initial;background:none}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{color:#fff;display:block;padding-top:20px;clear:both;font-size:18px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;bottom:0;left:0;right:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29487d;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f6f7f9;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-repeat:no-repeat;background-position:50% 50%;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}</style></head>
+<body>
+<div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_http" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_http" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" style="border: medium none;" src="http://staticxx.facebook.com/connect/xd_arbiter/r/1FegrZjPbq3.js?version=42#channel=f15713c6b226ca&amp;origin=http%3A%2F%2Fmalinsky.eu" frameborder="0"></iframe><iframe name="fb_xdm_frame_https" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" style="border: medium none;" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/1FegrZjPbq3_002.html" frameborder="0"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div></div>
+<script type="text/javascript">(function(d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;js.async=true;
+                    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+                    fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));</script>
+<header id="header">
+<nav id="siteNav">
+<ul>
+<li><a class="active" href="http://malinsky.eu/blog/">Blog</a></li>
+<li><a href="http://malinsky.eu/resume/">Resume</a></li>
+<li><a href="http://malinsky.eu/teaching/">Teaching</a></li>
+<li><a href="http://malinsky.eu/research/">Research</a></li>
+<li><a href="http://malinsky.eu/contact/">Contact</a></li>
+</ul>
+</nav>
+<h1><a id="name" href="http://malinsky.eu/">Radek</a>
+<a id="surname" href="http://malinsky.eu/">Malinský</a>
+</h1>
+</header>
+<div id="bodyWrapper">
+<aside id="sectionAside">
+<div class="asideItem asideMenuItem">
+<p class="h3">Category</p>
+<nav id="sectionNav">
+<ul>
+<li><a href="http://malinsky.eu/blog/category/programming/" title="View all posts in Programming">Programming</a>
+</li>
+<li><a href="http://malinsky.eu/blog/category/research/" title="View all posts in Research">Research</a>
+</li>
+</ul>
+</nav>
+<div id="boxArchive">
+<select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+<option value="" selected="selected">Select Month</option>
+<option value="http://malinsky.eu/blog/2012/05/"> May 2012 &nbsp;(2)</option>
+<option value="http://malinsky.eu/blog/2012/04/"> April 2012 &nbsp;(2)</option>
+</select>
+</div>
+</div>
+<section class="asideItem asideMenuItem">
+<h3>Recent Posts</h3>
+<ul>
+<li><a href="http://malinsky.eu/blog/serial-port-communication-in-java/">Serial Port Communication in Java</a></li>
+<li><a href="http://malinsky.eu/blog/how-to-call-a-c-function-from-java/">How to call a C/C++ function from Java</a></li>
+<li><a href="http://malinsky.eu/blog/what-is-webometrics/">What is webometrics?</a></li>
+<li><a href="http://malinsky.eu/blog/how-to-distribute-a-java-application-as-executable-exe-file/">How to distribute a Java application as executable (.exe) file</a></li>
+</ul>
+</section>
+<section class="asideItem" id="asideBlogItem">
+<h3>Tag Cloud</h3>
+<div id="canvasWrapper" style="margin: -14px;">
+<canvas id="blogTagCanvas" width="228" height="218" onmouseover="canvasOver(this);" onmouseout="canvasOut(this);" style="margin-left: 0px; margin-top: 0px;">
+<div id="tags" style="display: none;">
+<a href="http://malinsky.eu/blog/tag/c/" class="tag-link-13" title="1 topic" style="font-size: 8pt;">C/C++</a>
+<a href="http://malinsky.eu/blog/tag/iexpress/" class="tag-link-8" title="1 topic" style="font-size: 8pt;">IExpress</a>
+<a href="http://malinsky.eu/blog/tag/jar/" class="tag-link-9" title="1 topic" style="font-size: 8pt;">JAR</a>
+<a href="http://malinsky.eu/blog/tag/java/" class="tag-link-6" title="3 topics" style="font-size: 20pt;">Java</a>
+<a href="http://malinsky.eu/blog/tag/jni/" class="tag-link-12" title="2 topics" style="font-size: 15.2pt;">JNI</a>
+<a href="http://malinsky.eu/blog/tag/jssc/" class="tag-link-14" title="1 topic" style="font-size: 8pt;">jSSC</a>
+<a href="http://malinsky.eu/blog/tag/netbeans/" class="tag-link-7" title="2 topics" style="font-size: 15.2pt;">NetBeans</a>
+<a href="http://malinsky.eu/blog/tag/serial-port/" class="tag-link-15" title="1 topic" style="font-size: 8pt;">serial port</a>
+<a href="http://malinsky.eu/blog/tag/webometrics/" class="tag-link-11" title="1 topic" style="font-size: 8pt;">Webometrics</a>
+</div>
+</canvas>
+</div>
+</section>
+<section class="asideItem">
+<h3>Latest News</h3>
+<h4>Website optimized for faster loading time (Minify, GZip, ETag, Caches, ...)</h4>
+<h5>July 5, 2012</h5>
+<h4>Added captcha for comments</h4>
+<h5>July 5, 2012</h5>
+<h4>New website launched</h4>
+<h5>April 16, 2012</h5>
+</section>
+</aside>
+<div id="sectionWrapper" class="paragraph">
+<article id="sectionContent">
+<header class="entry-header">
+<h1 class="entry-title">How to call a C/C++ function from Java</h1>
+<div class="entry-meta">
+<small><span class="sep">Posted on </span><a href="http://malinsky.eu/blog/how-to-call-a-c-function-from-java/" title="18:11" rel="bookmark"><time class="updated entry-date" datetime="2012-05-29T18:11:48+00:00" pubdate="">May 29, 2012</time></a><span class="by-author">
+<span class="sep"> by </span>
+<span class="author vcard"><a class="url fn n" href="http://malinsky.eu/blog/author/radek/" title="View all posts by Radek Malinský" rel="author">Radek Malinský</a></span></span></small>
+</div>
+</header>
+<div class="entry-content">
+<p>Java Native Interface (JNI), part of the Java platform, is an 
+interface that enables communication between Java applications running 
+on a Java Virtual Machine (JVM) and native applications&nbsp;or 
+libraries written in other programming languages (e.g. C, C++).</p>
+<p>JNI provides improved performance in some low-level tasks (e.g.&nbsp;<em>Math.sqrt (double a)</em>)
+ and enables communication with hardware devices (Bluetooth, Wi-Fi, 
+etc.).&nbsp;However, there is a disadvantage in the loss of platform 
+independence, because such program uses the library compiled for 
+specific operating system.</p>
+<p><span id="more-104"></span></p>
+<div id="attachment_192" style="width: 510px" class="wp-caption aligncenter"><a href="http://malinsky.eu/blog/wp-content/uploads/2012/05/jni.png" target="_blank" rel="lightbox[104]" title="Java Native Interface - creating dynamic library and calling from Java" class="cboxElement"><img class="wp-image-192" title="Java Native Interface - creating dynamic library and calling from Java" alt="Java Native Interface - creating dynamic library and calling from Java" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/jni-500x207.png" width="500" height="207"></a><p class="wp-caption-text">Java Native Interface – creating dynamic library and calling from Java</p></div>
+<p>The figure above&nbsp;shows the&nbsp;implementation of&nbsp;a 
+native&nbsp;library&nbsp;and its&nbsp;integration with 
+Java.&nbsp;Example&nbsp;demonstrates&nbsp;how to 
+call&nbsp;C&nbsp;library&nbsp;that&nbsp;prints&nbsp;the text “Hello 
+World from C function!”&nbsp;from&nbsp;Java application.&nbsp;The 
+entire&nbsp;implementation process&nbsp;can be summarized&nbsp;into 
+several steps:</p>
+<ol>
+<li><strong>Create a class that declares the native methods</strong>
+<div><div id="highlighter_787438" class="syntaxhighlighter  java"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java keyword">public</code> <code class="java keyword">class</code> <code class="java plain">HelloWorld {</code></div><div class="line number2 index1 alt1">&nbsp;</div><div class="line number3 index2 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;</code><code class="java keyword">static</code> <code class="java plain">{</code></div><div class="line number4 index3 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">// load the C-library</code></div><div class="line number5 index4 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">System.loadLibrary(</code><code class="java string">"HelloWorld"</code><code class="java plain">);</code></div><div class="line number6 index5 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;</code><code class="java plain">}</code></div><div class="line number7 index6 alt2">&nbsp;</div><div class="line number8 index7 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;</code><code class="java comments">// declaration of native method</code></div><div class="line number9 index8 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;</code><code class="java keyword">private</code> <code class="java keyword">native</code> <code class="java keyword">void</code> <code class="java plain">print();</code></div><div class="line number10 index9 alt1">&nbsp;</div><div class="line number11 index10 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;</code><code class="java keyword">public</code> <code class="java keyword">static</code> <code class="java keyword">void</code> <code class="java plain">main(String[] args) {</code></div><div class="line number12 index11 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java keyword">new</code> <code class="java plain">HelloWorld().print();</code></div><div class="line number13 index12 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;</code><code class="java plain">}</code></div><div class="line number14 index13 alt1"><code class="java plain">}</code></div></div></td></tr></tbody></table></div></div>
+<ul>
+<li><strong>loadLibrary(String libname)</strong> method is used to load an external C-library, <em>libname</em> represents the path to the library.</li>
+<li>Placing the call in a <strong>static initialization block</strong> 
+ensures that the library is only loaded once per class. Static 
+initialization block&nbsp;is executed immediately after the class is 
+loaded into memory.</li>
+<li>Keyword <strong>native</strong>&nbsp;is used to denote a native methods; the methods created in&nbsp;C-library, which will be called.</li>
+</ul>
+</li>
+<li><strong>Compile the Java program</strong>
+<ul>
+<li>In NetBeans IDE, right-click the project name and select <em>Clean and Build</em>&nbsp;from the context menu. Now the .class files will be created in the “build\classes” folder in the project directory.</li>
+<li>Outside of IDE, use an external <strong>javac</strong> tool.</li>
+</ul>
+</li>
+<li><strong>Generate the header file</strong>
+<ul>
+<li>To generate a C-header file (.h) with a native function declaration use the <strong>javah</strong>&nbsp;tool
+ (part of JDK, typically in C:\Program Files\Java\jdk\bin) on the Java 
+.class file. Enter the file name without .class extension:
+<div><div id="highlighter_818949" class="syntaxhighlighter  bash"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="bash plain">javah -jni HelloWorld</code></div></div></td></tr></tbody></table></div></div>
+</li>
+<li>Generated header file contains a declaration of C-function that is linked with the Java native method:
+<div><div id="highlighter_266493" class="syntaxhighlighter  cpp"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="cpp plain">JNIEXPORT </code><code class="cpp keyword bold">void</code> <code class="cpp plain">JNICALL Java_HelloWorld_print (JNIEnv *, jobject);</code></div></div></td></tr></tbody></table></div></div>
+</li>
+</ul>
+</li>
+<li><strong>Write the C implementation of the native methods</strong>
+<ul>
+<li>In NetBeans IDE select <em>New Project</em> → <em>C/C++ Dynamic Library</em>.</li>
+<li>Created project&nbsp;must be linked&nbsp;with&nbsp;JNI&nbsp;libraries:
+<ul>
+<li>Right-click the project name and select <em>Properties</em>&nbsp;from the context menu.</li>
+<li>On the Project <em>Properties page</em>, select <em>C Compiler</em> section, and&nbsp;in the <em>Include Directories</em>&nbsp;box type&nbsp;paths to JNI (typically C:/Program Files/Java/jdk/lib and C:/Program Files/Java/jdk/include/win32).</li>
+<li>In the same section <em>C Compiler</em>, in the&nbsp;<em>Additional Options</em>&nbsp;box type:
+<div><div id="highlighter_951463" class="syntaxhighlighter  bash"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="bash plain">-Wl,--add-stdcall-</code><code class="bash functions">alias</code> <code class="bash plain">-mno-cygwin -shared -m32 -Wall -pedantic</code></div></div></td></tr></tbody></table></div></div>
+<ul>
+<li><strong>-Wl,–add-stdcall-alias</strong>&nbsp;passes option <em>–add-stdcall-alias</em> to the linker. The option sets alias for the function names without the addition of @nn.</li>
+<li><strong>-mno-cygwin</strong>&nbsp;ensures independence from cygwin.dll on Windows environment (when using cygwin gcc).</li>
+<li><strong>-shared</strong>&nbsp;option tells the compiler to generate a dynamic library instead of executable file.</li>
+<li><strong>-m32</strong>&nbsp;option&nbsp;tells the compiler to create a 32b binary&nbsp;(required only when using 64b GCC&nbsp;and 32b JDK).</li>
+<li><strong>-Wall -pedantic</strong>&nbsp;ensures print of all warning messages and source code control to ANSI standards.</li>
+</ul>
+</li>
+<li>Copy&nbsp;the generated&nbsp;header file&nbsp;to the 
+created&nbsp;project directory and&nbsp;link&nbsp;it&nbsp;to the project
+ (right-click&nbsp;the <em>Header Files</em>&nbsp;node,&nbsp;select <em>Add&nbsp;Existing&nbsp;Item</em>&nbsp;from the context menu).</li>
+<li>Implement&nbsp;methods, right-click&nbsp;the <em>Source&nbsp;Files</em> node, select&nbsp;<em>New</em>&nbsp;and then&nbsp;<em>C&nbsp;Source&nbsp;File</em>.</li>
+<li>Edit the created file by&nbsp;typing the following code:
+<div><div id="highlighter_854389" class="syntaxhighlighter  cpp"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="cpp preprocessor">#include &lt;jni.h&gt;</code></div><div class="line number2 index1 alt1"><code class="cpp preprocessor">#include &lt;stdio.h&gt;</code></div><div class="line number3 index2 alt2"><code class="cpp preprocessor">#include "HelloWorld.h"</code></div><div class="line number4 index3 alt1">&nbsp;</div><div class="line number5 index4 alt2"><code class="cpp plain">JNIEXPORT </code><code class="cpp keyword bold">void</code> <code class="cpp plain">JNICALL</code></div><div class="line number6 index5 alt1"><code class="cpp plain">Java_HelloWorld_print(JNIEnv *env, jobject obj) {</code></div><div class="line number7 index6 alt2"><code class="cpp spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="cpp functions bold">printf</code><code class="cpp plain">(</code><code class="cpp string">"Hello World from C function!\n"</code><code class="cpp plain">);</code></div><div class="line number8 index7 alt1"><code class="cpp plain">}</code></div></div></td></tr></tbody></table></div></div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Compile the dynamic library</strong>
+<ul>
+<li>Right-click the project name and select <em>Clean and Build</em>.</li>
+<li>Now the dynamic library file (.dll for Windows, .so for Unix) will be created in the “dist” folder in the project directory.</li>
+</ul>
+</li>
+<li><strong>Run the program using the java runtime interpreter</strong>
+<ul>
+<li>Copy the&nbsp;generated library&nbsp;(.dll&nbsp;or 
+.so)&nbsp;to&nbsp;the Java&nbsp;project&nbsp;directory or to the 
+directory&nbsp;where executable file.</li>
+<li>If library&nbsp;in another directory, must&nbsp;define the path&nbsp;in the <em>loadLibrary(String libname)</em>&nbsp;method.</li>
+<li>Run&nbsp;the Java&nbsp;application 
+and&nbsp;output&nbsp;prints&nbsp;the text “Hello World from C function!”
+ as defined in&nbsp;C.</li>
+</ul>
+</li>
+</ol>
+<p>More information about JNI can be found in the book&nbsp;<a title="Java Native Interface: Programmer's Guide and Specification" href="http://192.9.162.55/docs/books/jni/" target="_blank">Java Native Interface: Programmer’s Guide and Specification</a>.</p>
+</div>
+<section id="sharebar">
+<ul>
+<li><div class="fb-like fb_iframe_widget" data-send="true" data-width="100" data-show-faces="true" data-font="segoe ui" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=&amp;container_width=119&amp;font=segoe%20ui&amp;href=http%3A%2F%2Fmalinsky.eu%2Fblog%2Fhow-to-call-a-c-function-from-java%2F&amp;locale=en_US&amp;sdk=joey&amp;send=true&amp;show_faces=true&amp;width=100"><span style="vertical-align: bottom; width: 225px; height: 20px;"><iframe name="f5f6e220c18daa" allowtransparency="true" allowfullscreen="true" scrolling="no" title="fb:like Facebook Social Plugin" style="border: medium none; visibility: visible; width: 225px; height: 20px;" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/like.html" class="" width="100px" height="1000px" frameborder="0"></iframe></span></div></li>
+<li><div style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent none repeat scroll 0% 0%; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 50px; height: 24px;" id="___plusone_0"><iframe ng-non-bindable="" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 50px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 24px;" tabindex="0" vspace="0" id="I0_1490693625378" name="I0_1490693625378" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/fastbutton.html" data-gapiattached="true" title="+1" width="100%" frameborder="0"></iframe></div></li>
+<li><div class="twitter-tweet"><iframe id="twitter-widget-0" scrolling="no" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" style="position: static; visibility: visible; width: 60px; height: 20px;" title="Twitter Tweet Button" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/tweet_button.html" frameborder="0"></iframe><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div></li>
+</ul>
+<script type="text/javascript">
+        (function() {
+            var po = document.createElement('script');po.type = 'text/javascript';po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+</script>
+</section>
+<footer class="entry-meta">
+<small>
+        This entry was posted in <a href="http://malinsky.eu/blog/category/programming/" rel="category tag">Programming</a> and tagged <a href="http://malinsky.eu/blog/tag/c/" rel="tag">C/C++</a>, <a href="http://malinsky.eu/blog/tag/java/" rel="tag">Java</a>, <a href="http://malinsky.eu/blog/tag/jni/" rel="tag">JNI</a>, <a href="http://malinsky.eu/blog/tag/netbeans/" rel="tag">NetBeans</a> by <a href="http://malinsky.eu/blog/author/radek/">Radek Malinský</a> (<a href="https://plus.google.com/u/0/101405513747983840417/posts" target="_blank" rel="author">Goole+</a>, <a href="https://www.facebook.com/RadekMalinsky" target="_blank">Facebook</a>, <a href="http://twitter.com/RadekMalinsky" target="_blank">Twitter</a>). Bookmark the <a href="http://malinsky.eu/blog/how-to-call-a-c-function-from-java/" title="Permalink to How to call a C/C++ function from Java" rel="bookmark">permalink</a>.        
+</small>
+</footer>
+<section id="comments">
+<div id="respond" class="comment-respond">
+<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="http://malinsky.eu/blog/how-to-call-a-c-function-from-java/#respond" style="display:none;">Cancel reply</a></small></h3>
+<form action="http://malinsky.eu/blog/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate="novalidate">
+<p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> Required fields are marked <span class="required">*</span></p>
+<p class="comment-form-author"><label for="author">Name <span class="required">*</span></label>
+<input id="author" name="author" size="30" aria-required="true" required="required" type="text"></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label>
+<input id="email" name="email" size="30" aria-describedby="email-notes" aria-required="true" required="required" type="text"></p>
+<p class="comment-form-url"><label for="url">Website</label>
+<input id="url" name="url" size="30" type="text"></p>
+<p class="comment-form-comment"><label for="comment">Comment</label>
+<textarea id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true" required="required"></textarea></p>
+<p class="form-allowed-tags" id="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a
+ href="" title=""&gt; &lt;abbr title=""&gt; &lt;acronym title=""&gt; 
+&lt;b&gt; &lt;blockquote cite=""&gt; &lt;cite&gt; &lt;code&gt; &lt;del 
+datetime=""&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=""&gt; &lt;s&gt; 
+&lt;strike&gt; &lt;strong&gt; </code></p>
+<p class="form-submit">
+<input name="comment_post_ID" value="104" id="comment_post_ID" type="hidden">
+<input name="comment_parent" id="comment_parent" value="0" type="hidden">
+</p><div class="g-recaptcha" data-sitekey="6Lc24gkTAAAAACTjDtZCcbi1gdHchjos4DD-8nYk" data-theme="standard"><div style="width: 304px; height: 78px;"><div><iframe src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/anchor.html" title="recaptcha widget" scrolling="no" name="undefined" width="304" height="78" frameborder="0"></iframe></div><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid #c1c1c1; margin: 10px 25px; padding: 0px; resize: none;  display: none; "></textarea></div></div><script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/api.js"></script>
+<div id="recaptcha-submit-btn-area">&nbsp;<input name="submit" id="submit" class="submit" value="Post Comment" tabindex="6" type="submit"></div>
+<noscript>
+<style type='text/css'>#submit {display:none;}</style>
+<input name="submit" type="submit" id="submit-alt" tabindex="6"
+                value="Submit Comment"/>
+</noscript>
+<div class="error" style="display: none;">Please fill all the required fields</div><div class="error errorlabels" style="display: none;"></div></form>
+</div>
+</section>
+</article>
+<div id="person">
+<img src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/pan.gif" alt="">
+</div>
+</div>
+<hr class="cleaner">
+</div>
+<footer id="footer">
+<div id="card">Copyright © 2017        <span class="author vcard">
+<a class="url fn n" rel="author" href="https://profiles.google.com/101405513747983840417" title="View author Google+ profile" target="_blank">Radek Malinský</a>
+<br>
+            E-mail: <a class="email" href="mailto:radek@malinsky.eu?subject=E-mail%20from%20malinsky.eu">radek@malinsky.eu</a><br>
+</span>
+<div id="html5logo">
+<a href="http://www.w3.org/html/logo/" target="_blank">
+<img src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/html5-badge-h-css3-graphics-semantics.png" alt="HTML5 Powered with CSS3 / Styling, Graphic Effects, and Semantics" title="HTML5 Powered with CSS3 / Styling, Graphic Effects, and Semantics" width="197" height="64">
+</a>
+</div>
+</div>
+</footer>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/jquery_002.js"></script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/static.js"></script>
+<script type="text/javascript">
+            var sub = document.getElementById('submit');
+            document.getElementById('recaptcha-submit-btn-area').appendChild (sub);
+            document.getElementById('submit').tabIndex = 6;
+            if ( typeof _recaptcha_wordpress_savedcomment != 'undefined') {
+                document.getElementById('comment').value = 
+                    _recaptcha_wordpress_savedcomment;
+            }
+</script>
+<script type="text/javascript">
+jQuery(document).ready(function($){
+  $("a[rel*=lightbox]").colorbox({speed:350,initialWidth:"300",initialHeight:"100",opacity:0.8,loop:false,scrolling:false,escKey:false,arrowKey:false,top:false,right:false,bottom:false,left:false});
+});
+</script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/shCore.js"></script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/shBrushJava.js"></script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/shBrushBash.js"></script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/shBrushCpp.js"></script>
+<script type="text/javascript">
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://malinsky.eu/blog/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.9b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://malinsky.eu/blog/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.9b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['auto-links'] = false;
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.defaults['smart-tabs'] = false;
+	SyntaxHighlighter.defaults['toolbar'] = false;
+	SyntaxHighlighter.defaults['wrap-lines'] = false;
+	SyntaxHighlighter.all();
+</script>
+<link rel="stylesheet" id="wordpresscommentvalidation-css" href="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/validation.css" type="text/css" media="all">
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/jquery_003.js"></script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/jquery-migrate.js"></script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/jquery.js"></script>
+<script type="text/javascript" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/validation.js"></script>
+
+<div id="cboxOverlay" style="display: none;"></div><div id="colorbox" class="" role="dialog" tabindex="-1" style="display: none;"><div id="cboxWrapper"><div><div id="cboxTopLeft" style="float: left;"></div><div id="cboxTopCenter" style="float: left;"></div><div id="cboxTopRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxMiddleLeft" style="float: left;"></div><div id="cboxContent" style="float: left;"><div id="cboxTitle" style="float: left;"></div><div id="cboxCurrent" style="float: left;"></div><button type="button" id="cboxPrevious"></button><button type="button" id="cboxNext"></button><button id="cboxSlideshow"></button><div id="cboxLoadingOverlay" style="float: left;"></div><div id="cboxLoadingGraphic" style="float: left;"></div></div><div id="cboxMiddleRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxBottomLeft" style="float: left;"></div><div id="cboxBottomCenter" style="float: left;"></div><div id="cboxBottomRight" style="float: left;"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none; max-width: none;"></div></div><iframe name="oauth2relay878324140" id="oauth2relay878324140" src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/postmessageRelay.html" style="width: 1px; height: 1px; position: absolute; top: -100px;" tabindex="-1" aria-hidden="true"></iframe><div style="background-color: #fff; border: 1px solid #ccc; box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2); position: absolute; left: 0px; top: -10000px; transition: visibility 0s linear 0.3s, opacity 0.3s linear; opacity: 0; visibility: hidden; z-index: 2000000000;"><div style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 2000000000; background-color: #fff; opacity: 0.05;  filter: alpha(opacity=5)"></div><div class="g-recaptcha-bubble-arrow" style="border: 11px solid transparent; width: 0; height: 0; position: absolute; pointer-events: none; margin-top: -11px; z-index: 2000000000;"></div><div class="g-recaptcha-bubble-arrow" style="border: 10px solid transparent; width: 0; height: 0; position: absolute; pointer-events: none; margin-top: -10px; z-index: 2000000000;"></div><div style="z-index: 2000000000; position: relative;"><iframe src="How%20to%20call%20a%20C_C++%20function%20from%20Java%20%7C%20Radek%20Malinsk%C3%BD_files/bframe.html" title="recaptcha challenge" style="width: 100%; height: 100%;" scrolling="no" name="13wyxlepwtz2" frameborder="0"></iframe></div></div><iframe id="rufous-sandbox" scrolling="no" allowtransparency="true" allowfullscreen="true" style="position: absolute; visibility: hidden; display: none; width: 0px; height: 0px; padding: 0px; border: medium none;" title="Twitter analytics iframe" frameborder="0"></iframe></body></html>

@@ -1,0 +1,15 @@
+initialised int = 1
+uninitialised int = 2
+
+initialised char = 0
+uninitialised char = 0
+
+initialised float = 1
+uninitialised float = 0
+
+initialised double = 0
+uninitialised double = 0
+
+Number of loops are :0
+Number of Conditional statements are 0
+Number of Parameters are 1
